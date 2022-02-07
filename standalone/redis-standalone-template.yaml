@@ -1,0 +1,83 @@
+apiVersion: tmax.io/v1
+kind: ClusterTemplate
+metadata:
+  name: ot-container-kit-redis-standalone-template
+shortDescription: "Redis standalone Deployment"
+longDescription: "Redis standalone with redis-operator"
+urlDescription: https://ot-container-kit.github.io/redis-operator/
+provider: tmax
+categories:
+- redis
+- standalone
+- ot-container-kit
+parameters:
+- name: APP_NAME
+  displayName: A Redis Standalone
+  description: metadata name
+  value: "redis-standalone"
+  required: true
+  valueType: string
+- name: REDIS_SECRET_PASSWORD
+  displayName: Redis Secret password
+  description: Redis Secret password
+  value: "abcd=="
+  required: true
+  valueType: string
+- name: REDIS_STANDALONE_STORAGE
+  displayName: Redis Standalone Storage
+  description: Redis Standalone size
+  value: 5Gi
+  required: true
+  valueType: string
+- name: STORAGE_CLASS
+  displayName: Storage Class
+  description: Storage class name
+  value: csi-cephfs-sc
+  required: true
+  valueType: string
+- name: REDIS_STANDALONE_RESOURCE_CPU
+  displayName: Redis Standalone Resource CPU
+  description: Redis Standalone resource request, CPU (e.g., 1)
+  value: 1
+  required: true
+  valueType: string
+- name: REDIS_STANDALONE_RESOURCE_MEM
+  displayName: Redis Standalone Resource Mem
+  description: Redis Standalone Resource request, Mem (e.g., 1Gi)
+  value: 1Gi
+  required: true
+  valueType: string
+objects:
+- apiVersion: v1
+  kind: Secret
+  metadata:
+    name: redis-secret
+  stringData:
+    password: ${REDIS_SECRET_PASSWORD}
+- apiVersion: redis.redis.opstreelabs.in/v1beta1
+  kind: Redis
+  metadata:
+    name: ${APP_NAME}
+  spec:
+    kubernetesConfig:
+      image: quay.io/opstree/redis:v6.2.5
+      imagePullPolicy: IfNotPresent
+      resources:
+        requests:
+          cpu: ${REDIS_STANDALONE_RESOURCE_CPU}
+          memory: ${REDIS_STANDALONE_RESOURCE_MEM}
+        limits:
+          cpu: ${REDIS_STANDALONE_RESOURCE_CPU}
+          memory: ${REDIS_STANDALONE_RESOURCE_MEM}
+      redisSecret:
+        name: redis-secret
+        key: password
+    storage:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: ${STORAGE_CLASS}
+          accessModes: ["ReadWriteOnce"]
+          resources:
+            requests:
+              storage: ${REDIS_STANDALONE_STORAGE}
+---

@@ -1,0 +1,22 @@
+apiVersion: tmax.io/v1
+kind: TemplateInstance
+metadata:
+  name: ot-container-kit-redis-standalone-template-instance1
+  annotations:
+    template-version: 5.0.6
+    tested-operator-version: 0.10.0
+spec:
+  clustertemplate:
+    metadata:
+      name: ot-container-kit-redis-standalone-template
+    parameters:
+    - name: APP_NAME
+      value: "redis-standalone"
+    - name: REDIS_SECRET_PASSWORD
+      value: "abcd=="
+    - name: REDIS_STANDALONE_STORAGE
+      value: 5Gi
+    - name: REDIS_STANDALONE_RESOURCE_CPU
+      value: 1
+    - name: REDIS_STANDALONE_RESOURCE_MEM
+      value: 1Gi

@@ -1,0 +1,90 @@
+apiVersion: tmax.io/v1
+kind: ClusterTemplate
+metadata:
+  name: ot-container-kit-redis-cluster-template
+shortDescription: "Redis Cluster Deployment"
+longDescription: "Redis Cluster with redis-operator"
+urlDescription: https://ot-container-kit.github.io/redis-operator/
+provider: tmax
+categories:
+- redis
+- cluster
+- ot-container-kit
+parameters:
+- name: APP_NAME
+  displayName: A Redis Cluster
+  description: metadata name
+  value: "redis-cluster"
+  required: true
+  valueType: string
+- name: REDIS_SECRET_PASSWORD
+  displayName: Redis Secret password
+  description: Redis Secret password
+  value: "abcd=="
+  required: true
+  valueType: string
+- name: REDIS_CLUSTER_REPLICA_COUNT
+  displayName: Redis Cluster Replica Count
+  description: Number of redis cluster pair(leader, follower), greater 3 or equal to
+  value: 3
+  required: true
+  valueType: number
+- name: REDIS_CLUSTER_STORAGE
+  displayName: Redis Cluster Storage
+  description: Redis Cluster storage size
+  value: 5Gi
+  required: true
+  valueType: string
+- name: STORAGE_CLASS
+  displayName: Storage Class
+  description: Storage class name
+  value: csi-cephfs-sc
+  required: true
+  valueType: string
+- name: REDIS_CLUSTER_RESOURCE_CPU
+  displayName: Redis Cluster Resource CPU
+  description: Redis Cluster resource request, CPU (e.g., 1)
+  value: 1
+  required: true
+  valueType: string
+- name: REDIS_CLUSTER_RESOURCE_MEM
+  displayName: Redis Cluster Resource Mem
+  description: Redis Cluster Resource request, Mem (e.g., 1Gi)
+  value: 1Gi
+  required: true
+  valueType: string
+objects:
+- apiVersion: v1
+  kind: Secret
+  metadata:
+    name: redis-secret
+  stringData:
+    password: ${REDIS_SECRET_PASSWORD}
+- apiVersion: redis.redis.opstreelabs.in/v1beta1
+  kind: RedisCluster
+  metadata:
+    name: ${APP_NAME}
+  spec:
+    clusterSize: ${REDIS_CLUSTER_REPLICA_COUNT}
+    kubernetesConfig:
+      image: quay.io/opstree/redis:v6.2.5
+      imagePullPolicy: IfNotPresent
+      resources:
+        requests:
+          cpu: ${REDIS_CLUSTER_RESOURCE_CPU}
+          memory: ${REDIS_CLUSTER_RESOURCE_MEM}
+        limits:
+          cpu: ${REDIS_CLUSTER_RESOURCE_CPU}
+          memory: ${REDIS_CLUSTER_RESOURCE_MEM}
+      redisSecret:
+        name: redis-secret
+        key: password
+    storage:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: ${STORAGE_CLASS}
+          accessModes: ["ReadWriteOnce"]
+          resources:
+            requests:
+              storage: ${REDIS_CLUSTER_STORAGE}
+---
