@@ -51,7 +51,7 @@ objects:
 - apiVersion: v1
   kind: Secret
   metadata:
-    name: redis-secret
+    name: redis-secret-standalone
   stringData:
     password: ${REDIS_SECRET_PASSWORD}
 - apiVersion: redis.redis.opstreelabs.in/v1beta1
@@ -70,7 +70,7 @@ objects:
           cpu: ${REDIS_STANDALONE_RESOURCE_CPU}
           memory: ${REDIS_STANDALONE_RESOURCE_MEM}
       redisSecret:
-        name: redis-secret
+        name: redis-secret-standalone
         key: password
     storage:
       volumeClaimTemplate:

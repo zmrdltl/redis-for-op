@@ -11,7 +11,7 @@ spec:
       name: ot-container-kit-redis-cluster-template
     parameters:
     - name: APP_NAME
-      value: "hello-cluster"
+      value: "redis-cluster"
     - name: REDIS_SECRET_PASSWORD
       value: "abcd=="
     - name: REDIS_CLUSTER_REPLICA_COUNT
