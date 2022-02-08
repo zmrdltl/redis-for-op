@@ -1,15 +1,15 @@
 apiVersion: binding.operators.coreos.com/v1alpha1
 kind: ServiceBinding
 metadata:
-  name: demo-sb-standalone
+  name: demo-sb-standalone              #service binding 객체 이름
 spec:
-  services:
-    - group: redis.redis.opstreelabs.in
-      version: v1beta1
-      kind: Redis
-      name: redis-standalone
-  application:
-    name: tomcat-deploy
-    group: apps
-    version: v1
-    resource: deployments
+  services:                             #backing service(DB) 정의
+    - group: redis.redis.opstreelabs.in #API group
+      version: v1beta1                  #API group version
+      kind: Redis                       #API Resource명
+      name: redis-standalone            #provisioned된 backing service의 matadata.name  
+  application:                          #App정의
+    name: tomcat-deploy                 #provisioned된 app의 matadata.name
+    group: apps                         #API group
+    version: v1                         #API group version
+    resource: deployments               #API resource명
