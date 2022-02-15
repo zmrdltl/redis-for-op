@@ -16,6 +16,7 @@ tomcat에 Redis의 연결정보(password) 주입을 위한 service binding객체
 ## Servicebinding 생성시 내부동작
 ### 구조
 ![image](https://user-images.githubusercontent.com/22141521/152931074-6393d75a-b45b-4110-8c0e-2b96e3ef0ae1.png)
+<br/>
 template instance인 redis와 redis-secret은 생성되었다고 가정(빨강 선)
 <br/>
 번호는 생성 및 동작 순서
